@@ -52,14 +52,18 @@ if ($data = $search_form->get_data()) {
 if ($id) {
     $notes_form = new notes_create_note($CFG->wwwroot.'/local/coursenotes/notes.php?id='.$id);
     if ($data = $notes_form->get_data()) {
+        $time = time();
         if ($note = $DB->get_record('course_notes', array('userid' => $USER->id, 'courseid' => $id))) {
             $note->note = $data->note;
+            $note->timemodified = $time;
             $DB->update_record('course_notes', $note);
         } else {
             $note = new stdClass();
             $note->userid = $USER->id;
             $note->courseid = $id;
             $note->note = $data->note;
+            $note->timecreated = $time;
+            $note->timemodified = $time;
             $DB->insert_record('course_notes', $note);
         }
         $notes_form->set_data($note);
